@@ -49,22 +49,3 @@ do
     echo -e "ok\n"
     echo ""
 done
-exit 1
-
-ID=$(basename $AUDIO|cut -d '.' -f 1)
-echo $ID
-
-#To generate the image:
-
-echo -e "$TITLE"|convert -font ~/Library/Fonts/swiss\ 721\ narrow\ bold\ swa.ttf -background $COLOR -density 196 -resample 72 -fill white -page 1920x1080 -pointsize 330 text:- +repage $ID.png
-
-if [ ! -f $ID.png ]
-then
-    echo "Image $ID.png not found"
-    exit 1
-fi
-#To generate the video:
-ffmpeg -loop 1 -y -i $ID.png -i $AUDIO -c:v libx264 -tune stillimage -filter:v fps=fps=30 -strict -2 -c:a aac -b:a 192k -pix_fmt yuv420p -shortest ${ID}-HD.mp4
-#ffmpeg -loop 1 -y -framerate 30 -i 04-11_4.png -i 04-11_4.ogg -codec copy -shortest output.mkv
-#ffmpeg -loop 1 -y -i $ID.png -i $AUDIO -c:v libx264 -crf 18 -c:a copy $ID.mkv
-
