@@ -8,7 +8,8 @@ function generate_image()
     TITLE="$1"
     COLOR=$2
     ID=$3
-echo -e "$TITLE"|convert -font ~/Library/Fonts/swiss\ 721\ narrow\ bold\ swa.ttf -background $COLOR -density 196 -resample 72 -fill white -page 1920x1080 -pointsize 330 text:- +repage images/$ID.png
+    echo -e "$TITLE"|convert -font ~/Library/Fonts/swiss\ 721\ narrow\ bold\ swa.ttf -background $COLOR -density 196 -resample 72 -fill white \
+                             -page 1920x1080 -pointsize 300 text:- +repage images/$ID.png
 }
 
 function generate_video()
@@ -16,12 +17,14 @@ function generate_video()
     TITLE="$1"
     AUDIO="$2"
     ID=$3
-    ffmpeg -loop 1 -y -i images/$ID.png -i audio/$AUDIO -c:v libx264 -tune stillimage -filter:v fps=fps=30 -strict -2 -c:a aac -b:a 192k -pix_fmt yuv420p -shortest videos/${ID}.mp4
+    ffmpeg -loop 1 -y -i images/$ID.png -i audio/$AUDIO -c:v libx264 \
+           -tune stillimage -filter:v fps=fps=30 -strict -2 -c:a aac \
+           -b:a 192k -pix_fmt yuv420p -shortest videos/${ID}.mp4
 }
 
 for i in $(cat info.cfg)
 do
-    AUDIO=$(echo $i|cut -d ":" -f 1)
+    AUDIO=$(echo $i|cut -d ":" -f 1)".mp3"
     TITLE=$(echo $i|cut -d ":" -f 2)
     COLOR=${colors[$(expr $RANDOM % $colors_num)]}
     ID=$(basename $AUDIO .mp3)
