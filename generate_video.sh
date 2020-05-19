@@ -2,14 +2,14 @@
 IFS=$'\n'
 colors=(123456 aadd43)
 colors_num=${#colors[@]}
-
+FONTSIZE=260
 function generate_image()
 {
     TITLE="$1"
     COLOR=$2
     ID=$3
     echo -e "$TITLE"|convert -font ~/Library/Fonts/swiss\ 721\ narrow\ bold\ swa.ttf -background $COLOR -density 196 -resample 72 -fill white \
-                             -page 1920x1080 -pointsize 300 text:- +repage images/$ID.png
+                             -page 1920x1080 -pointsize $FONTSIZE text:- +repage images/$ID.png
 }
 
 function generate_video()
