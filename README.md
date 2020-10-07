@@ -17,3 +17,14 @@ i raggi. I punti dei raggi sono le coordinate delle parole presenti
 nel sogno.  Non tutte le parole, ma quelle meno ricorrenti dell'intero
 corpus dei sogni (es. rimuoviamo il 95% delle parole piu' ricorrenti).
 Il centro della stella viene calcolato come baricentro delle parole del sogno.
+
+# installation
+
+assuming pip3 in installed, then:
+```
+pip3 install nltk
+pip3 install spacy
+python3 -m spacy download it
+/Applications/Python\ 3.7/Install\ Certificates.command
+pip3 install sklearn
+```
