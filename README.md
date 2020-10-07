@@ -20,7 +20,7 @@ Il centro della stella viene calcolato come baricentro delle parole del sogno.
 
 # installation
 
-assuming pip3 in installed, then:
+assuming pip3 is installed, then:
 ```
 pip3 install nltk
 pip3 install spacy
