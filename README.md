@@ -28,3 +28,26 @@ python3 -m spacy download it
 /Applications/Python\ 3.7/Install\ Certificates.command
 pip3 install sklearn
 ```
+
+# some useful links
+https://medium.com/@Intellica.AI/comparison-of-different-word-embeddings-on-text-similarity-a-use-case-in-nlp-e83e08469c1c
+https://textminingonline.com/training-word2vec-model-on-english-wikipedia-by-gensim
+https://wikipedia2vec.github.io/wikipedia2vec/pretrained/
+
+
+# testing pre-trained models
+
+https://github.com/MartinoMensio/it_vectors_wiki_spacy
+https://spacy.io/usage/vectors-similarity
+
+# da 300 a 2 dimensioni
+
+Principal component analysis
+
+In python con sklearn
+https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
+
+
+https://towardsdatascience.com/visualization-of-word-embedding-vectors-using-gensim-and-pca-8f592a5d3354
+https://www.kaggle.com/jeffd23/visualizing-word-vectors-with-t-sne
+https://projector.tensorflow.org/
