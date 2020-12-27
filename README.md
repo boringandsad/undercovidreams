@@ -22,11 +22,8 @@ Il centro della stella viene calcolato come baricentro delle parole del sogno.
 
 assuming pip3 is installed, then:
 ```
-pip3 install nltk
-pip3 install spacy
+pip install nltk spacy sklearn pandas matplotlib gensim xlrd
 python3 -m spacy download it
-/Applications/Python\ 3.7/Install\ Certificates.command
-pip3 install sklearn
 ```
 
 # some useful links
@@ -47,6 +44,8 @@ Principal component analysis
 In python con sklearn
 https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
 
+
+https://gist.github.com/conormm/ca0cdf78fa7a91fdacf500ff4dff0645
 
 https://towardsdatascience.com/visualization-of-word-embedding-vectors-using-gensim-and-pca-8f592a5d3354
 https://www.kaggle.com/jeffd23/visualizing-word-vectors-with-t-sne
