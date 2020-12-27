@@ -54,5 +54,5 @@ data=[]
 for i in range(0,len(dreams)):
     data.append({'text': raw_dreams[0], 'coords': dreams2d[i]})
 
-with open('coordinates.txt', 'w') as outfile:
+with open('coordinates.json', 'w') as outfile:
     json.dump(data, outfile)
