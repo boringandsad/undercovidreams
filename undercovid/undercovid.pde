@@ -79,12 +79,18 @@ void draw() {
     }
     stroke(middle);
     fill(middle);
+
     for (String d : dreams_to_coords.keySet()) {
         PVector xy=dreams_to_coords.get(d);
         float newx=map(xy.x, min_x, max_x, 0, 1900);
         float newy=map(xy.y, min_y, max_y, 0, 1200);
         circle(newx, newy,10);
+    }
 
+    for (String d : dreams_to_coords.keySet()) {
+        PVector xy=dreams_to_coords.get(d);
+        float newx=map(xy.x, min_x, max_x, 0, 1900);
+        float newy=map(xy.y, min_y, max_y, 0, 1200);        
         if (abs(mouseX-newx)<lim && abs(mouseY-newy)<lim && !showingdream){
             pushStyle();
             ArrayList<String> dreamwords=dreams_to_words.get(d);
@@ -95,8 +101,8 @@ void draw() {
                 stroke(255);
                 circle(wx,wy,3);
                 fill(255);
-                textSize(10);
-                //                text(dreamwords.get(i), wx+y_gap, wy+y_gap);
+                textSize(14);
+                text(dreamwords.get(i), wx+4, wy);
             }
             showingdream=true;
             popStyle();
