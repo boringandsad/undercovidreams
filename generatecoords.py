@@ -17,12 +17,50 @@ from sklearn.decomposition import PCA
 #             wds.append(w.lemma_)
 #     return wds
 
+corrections={}
+corrections["dicendo"]="dire"
+corrections["abbraccia"]="abbracciare"
+corrections["abbracciati"]="abbracciato"
+corrections["andando"]="andare"
+corrections["andate"]="andare"
+corrections["aperti"]="aperto"
+corrections["aprendo"]="aprire"
+corrections["avendo"]="avere"
+corrections["avviamo"]="avviare"
+corrections["avviando"]="avviare"
+corrections["bevi"]="bere"
+corrections["chiedendo"]="chiedere"
+corrections["chiudi"]="chiudere"
+corrections["connessa"]="connesso"
+corrections["dicendo"]="dire"
+corrections["facendo"]="fare"
+corrections["finiamo"]="finire"
+corrections["godendo"]="godere"
+corrections["inizia"]="iniziare"
+corrections["iniziamo"]="iniziare"
+corrections["mettiamo"]="mettere"
+corrections["offesa"]="offeso"
+corrections["porta"]="portare"
+corrections["portiamo"]="portare"
+corrections["ridiamo"]="ridere"
+corrections["spente"]="spento"
+corrections["tieni"]="tenere"
+corrections["vedendo"]="vedere"
+corrections["vedi"]="vedere"
+corrections["vestita"]="vestito"
+excluded_lemmas=["avere", "essere", "potere", "dovere", "sognare", "sogno"]
 def get_words(index, docs):
     wds=[]
     for sent in docs[index].sentences:
         for w in sent.words:
-            if w.upos in ['VERB', 'ADJ', 'NOUN']:
-                wds.append(w.lemma)
+            if w.upos in ['VERB', 'ADJ', 'NOUN', 'PROPN', 'NUM']:
+                lemma=w.lemma
+                if not lemma and w.text in corrections.keys():
+                    lemma=corrections[w.text]
+                if lemma in excluded_lemmas:
+                    continue                    
+                if lemma and ((w.text, lemma) not in wds):
+                    wds.append((w.text, lemma))
     return wds
 
 def get_word_vectors(words):
@@ -60,9 +98,13 @@ with open('dreams.json', 'w') as outfile:
     json.dump(data_dreams, outfile)
 
 allwords=[]
-for i in range(0,len(dreams)):
-    allwords+=get_words(i, dreams)
+for i in range(0,len(data_dreams)):
+    for _,word in data_dreams[i]['words']:
+        allwords.append(word)
 allwords=list(set(allwords))
+#for i in range(0,len(dreams)):
+#    allwords+=get_words(i, dreams)[1]
+#allwords=list(set(allwords))
 
 print('reducing dimension to 2')
 pca = PCA(n_components=2)
