@@ -10,13 +10,6 @@ nlp = stanza.Pipeline(lang='it', processors='tokenize,mwt,pos,lemma')
 spacynlp = spacy.load("it_core_news_lg")
 from sklearn.decomposition import PCA
 
-# def get_words(index, docs):
-#     wds=[]
-#     for w in docs[index]:
-#         if w.pos_ in ['NOUN','VERB','ADJ']:
-#             wds.append(w.lemma_)
-#     return wds
-
 corrections={}
 corrections["dicendo"]="dire"
 corrections["abbraccia"]="abbracciare"
@@ -48,20 +41,20 @@ corrections["tieni"]="tenere"
 corrections["vedendo"]="vedere"
 corrections["vedi"]="vedere"
 corrections["vestita"]="vestito"
-excluded_lemmas=["avere", "essere", "potere", "dovere", "sognare", "sogno"]
+excluded_lemmas=["avere", "essere", "potere", "dovere", "sognare", "sogno", "certo", "altro","po'"]
 def get_words(index, docs):
     wds=[]
-    for sent in docs[index].sentences:
-        for w in sent.words:
-            if w.upos in ['VERB', 'ADJ', 'NOUN', 'PROPN', 'NUM']:
-                lemma=w.lemma
-                if not lemma and w.text in corrections.keys():
-                    lemma=corrections[w.text]
-                if lemma in excluded_lemmas:
-                    continue                    
-                if lemma and ((w.text, lemma) not in wds):
-                    wds.append((w.text, lemma))
-    return wds
+    for w in docs[index].sentences[0].words:
+        # when misc is not present, there's a compound
+        if w.upos in ['VERB', 'ADJ', 'NOUN', 'PROPN', 'NUM'] and w.misc:
+            lemma=w.lemma
+            # we force lemma when it's null
+            if not lemma and w.text in corrections.keys():
+                lemma=corrections[w.text]
+            if lemma in excluded_lemmas:
+                continue                    
+            wds.append((w.text, lemma))
+    return list(set(wds))
 
 def get_word_vectors(words):
     return [spacynlp(word).vector for word in words if word != None]
@@ -69,7 +62,6 @@ def get_word_vectors(words):
 raw_dreams=[]
 dreams=[]
 
-#print('reading dreams file')
 try:
     fp = open('sogni.txt', 'r')
     line = fp.readline()
@@ -95,7 +87,7 @@ for i in range(0,len(dreams)):
     data_dreams.append({'text': raw_dreams[i], 'words': get_words(i, dreams)})
 
 with open('dreams.json', 'w') as outfile:
-    json.dump(data_dreams, outfile)
+    json.dump(data_dreams, outfile, sort_keys=True, indent=3)
 
 allwords=[]
 for i in range(0,len(data_dreams)):
@@ -106,12 +98,12 @@ allwords=list(set(allwords))
 #    allwords+=get_words(i, dreams)[1]
 #allwords=list(set(allwords))
 
-print('reducing dimension to 2')
+#print('reducing dimension to 2')
 pca = PCA(n_components=2)
 pca.fit(get_word_vectors(allwords))
 words2d=pca.transform(get_word_vectors(allwords)).tolist()
 data_words=[(w, coord) for w, coord in zip(allwords,words2d)]
 
 with open('words.json', 'w') as outfile:
-    json.dump(data_words, outfile)
+    json.dump(data_words, outfile, sort_keys=True, indent=3)
 
