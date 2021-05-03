@@ -1,5 +1,5 @@
 url: "http://talamoig.github.io" # the base hostname & protocol for your site, e.g. http://example.com
-baseurl: "sognidallisola" # the subpath of your site, e.g. /blog
+baseurl: "/sognidallisola" # the subpath of your site, e.g. /blog
 title: "" # the name of your site, e.g. ACME Corp.
 
 source: source

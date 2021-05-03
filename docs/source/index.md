@@ -1,8 +1,7 @@
 ---
 layout: default
-title: "D3!"
+title: "sogni dall'isola"
 ---
-<script src="{{site.baseurl}}/assets/js/d3.min.js"></script>
 
 <script>
   function rangemap(min, max, val) {
@@ -27,7 +26,7 @@ title: "D3!"
 
   var wordscoords={}
   
-  d3.json("/assets/data/words.json").then(
+  d3.json("{{ site.baseurl }}/assets/data/words.json").then(
       function(data) {
           data.forEach(function(d) {
               d.word=d[0];
