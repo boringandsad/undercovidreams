@@ -32,7 +32,8 @@
       let camera, controls, scene, renderer, renderer2;
       
       d3.json("./assets/data/words.json").then(
-          function(data){            
+          function(data){
+              alert(data);
               init(data);
           });
 
