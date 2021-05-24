@@ -123,8 +123,12 @@
           const zscale=10;
 
           /* words data */
+          var first=true;
           words_data.forEach(function(d) {
-//              alert(d);
+              if (first){
+                  first=false;
+                  alert(d);
+              }
               if (d[0] in words)
                   words[d[0]]["num"]++;
               else
