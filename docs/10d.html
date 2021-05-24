@@ -163,6 +163,7 @@
 
               /* start point */
               const geometry = new THREE.BufferGeometry();
+              alert(w);
               geometry.setAttribute( 'position', new THREE.Float32BufferAttribute([w["x"], w["y"], w["z"]], 3));
               const wordsprite = loader.load( 'assets/data/word.png' );              
               const material = new THREE.PointsMaterial({size: 1, map: wordsprite, transparent: true, blending: THREE.AdditiveBlending, depthTest: false});            
