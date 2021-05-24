@@ -140,7 +140,7 @@
           const vertices = [];
           const VERTNUM=Object.keys(words).length;
           const loader = new THREE.TextureLoader();
-
+          alert("number of words:"+VERTNUM);
           for (const [k, w] of Object.entries(words)) {
               vertices.push(w["x"],w["y"],w["z"]);
 
