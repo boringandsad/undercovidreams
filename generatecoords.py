@@ -1,6 +1,8 @@
 #!/bin/env python
 
 from random import randint
+import nltk
+ita_stemmer = nltk.stem.snowball.ItalianStemmer()
 import spacy
 import sys
 import json
@@ -42,68 +44,69 @@ corrections["vedendo"]="vedere"
 corrections["vedi"]="vedere"
 corrections["vestita"]="vestito"
 excluded_lemmas=["avere", "essere", "potere", "dovere", "sognare", "sogno", "certo", "altro","po'"]
-def get_words(index, docs):
+def get_words(doc):
     wds=[]
-    for w in docs[index].sentences[0].words:
+    for sent in doc.sentences:
+        for w in sent.words:
         # when misc is not present, there's a compound
-        if w.upos in ['VERB', 'ADJ', 'NOUN', 'PROPN', 'NUM'] and w.misc:
-            lemma=w.lemma
-            # we force lemma when it's null
-            if not lemma and w.text in corrections.keys():
-                lemma=corrections[w.text]
-            if lemma in excluded_lemmas:
-                continue                    
-            wds.append((w.text, lemma))
+#            if w.upos in ['VERB', 'ADJ', 'NOUN', 'PROPN', 'NUM'] and w.misc:
+            if w.upos in ['VERB', 'NOUN'] and w.misc:
+                lemma=w.lemma
+                # we force lemma when it's null
+                if not lemma and w.text in corrections.keys():
+                    lemma=corrections[w.text]
+                if lemma in excluded_lemmas:
+                    continue                    
+                wds.append((w.text, lemma, w.upos))
     return list(set(wds))
 
 def get_word_vectors(words):
     return [spacynlp(word).vector for word in words if word != None]
 
-raw_dreams=[]
-dreams=[]
+fp= open('dreamsinfo.json', 'r')
+dreamsinfo=json.load(fp)
+for d in dreamsinfo:
+    d["words"]=get_words(nlp(d["text"].lower()))
 
-try:
-    fp = open('sogni.txt', 'r')
-    line = fp.readline()
-    lastdream=""
-    while line:
-        if (line.strip()=="---"):
-            if lastdream!="":
-                raw_dreams.append(lastdream.lower())
-                dreams.append(nlp(lastdream.lower()))
-                lastdream=""
+allwords_verbs=[]
+allwords_nouns=[]
+for dream in dreamsinfo:
+    for _,word,upos in dream['words']:
+        if upos=='VERB':
+            allwords_verbs.append(word)
         else:
-            lastdream+=line.strip()
-        line = fp.readline()
-    raw_dreams.append(lastdream.lower())
-    dreams.append(nlp(lastdream.lower()))
-except Exception as e:
-    print(e)
-    sys.exit(1)
+            allwords_nouns.append(word)
+allwords_verbs==list(set(allwords_verbs))
+allwords_nouns==list(set(allwords_nouns))
 
-data_dreams=[]
-
-for i in range(0,len(dreams)):
-    data_dreams.append({'text': raw_dreams[i], 'words': get_words(i, dreams)})
-
-with open('dreams.json', 'w') as outfile:
-    json.dump(data_dreams, outfile, sort_keys=True, indent=3)
-
-allwords=[]
-for i in range(0,len(data_dreams)):
-    for _,word in data_dreams[i]['words']:
-        allwords.append(word)
-allwords=list(set(allwords))
-#for i in range(0,len(dreams)):
-#    allwords+=get_words(i, dreams)[1]
-#allwords=list(set(allwords))
-
-#print('reducing dimension to 2')
-pca = PCA(n_components=2)
-pca.fit(get_word_vectors(allwords))
-words2d=pca.transform(get_word_vectors(allwords)).tolist()
+pca = PCA(n_components=3)
+pca.fit(get_word_vectors(allwords_verbs))
+words2d_verbs=pca.transform(get_word_vectors(allwords_verbs)).tolist()
+words2d_nouns=pca.transform(get_word_vectors(allwords_nouns)).tolist()
+allwords=allwords_verbs+allwords_nouns
+words2d=words2d_verbs+words2d_nouns
+#print(allwords_verbs)
 data_words=[(w, coord) for w, coord in zip(allwords,words2d)]
+
+data_words_map={}
+for w,coord in data_words:
+    data_words_map[w]=coord
 
 with open('words.json', 'w') as outfile:
     json.dump(data_words, outfile, sort_keys=True, indent=3)
 
+for dream in dreamsinfo:
+    c_x=0
+    c_y=0
+    c_z=0
+    for (_,w,_) in dream['words']:
+        c_x+=data_words_map[w][0]
+        c_y+=data_words_map[w][1]
+        c_z+=data_words_map[w][2]
+    c_x=c_x/len(dream['words']) 
+    c_y=c_y/len(dream['words'])
+    c_z=c_z/len(dream['words'])     
+    dream['coords']=(c_x, c_y, c_z)
+
+with open('dreams.json', 'w') as outfile:
+    json.dump(dreamsinfo, outfile, sort_keys=True, indent=3)
