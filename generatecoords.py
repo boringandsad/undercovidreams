@@ -93,7 +93,7 @@ for w,coord in data_words:
     data_words_map[w]=coord
 
 with open('words.json', 'w') as outfile:
-    json.dump(data_words, outfile, sort_keys=True, indent=3)
+    json.dump(data_words, outfile, sort_keys=True, indent=3, ensure_ascii=False)
 
 for dream in dreamsinfo:
     c_x=0
@@ -109,4 +109,4 @@ for dream in dreamsinfo:
     dream['coords']=(c_x, c_y, c_z)
 
 with open('dreams.json', 'w') as outfile:
-    json.dump(dreamsinfo, outfile, sort_keys=True, indent=3)
+    json.dump(dreamsinfo, outfile, sort_keys=True, indent=3, ensure_ascii=False)
