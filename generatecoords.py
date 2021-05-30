@@ -13,7 +13,6 @@ spacynlp = spacy.load("it_core_news_lg")
 from sklearn.decomposition import PCA
 
 corrections={}
-corrections["dicendo"]="dire"
 corrections["abbraccia"]="abbracciare"
 corrections["abbracciati"]="abbracciato"
 corrections["andando"]="andare"
@@ -27,6 +26,7 @@ corrections["bevi"]="bere"
 corrections["chiedendo"]="chiedere"
 corrections["chiudi"]="chiudere"
 corrections["connessa"]="connesso"
+corrections["dicendo"]="dire"
 corrections["dicendo"]="dire"
 corrections["facendo"]="fare"
 corrections["finiamo"]="finire"
@@ -44,19 +44,23 @@ corrections["vedendo"]="vedere"
 corrections["vedi"]="vedere"
 corrections["vestita"]="vestito"
 excluded_lemmas=["avere", "essere", "potere", "dovere", "sognare", "sogno", "certo", "altro","po'"]
+def fix_adjective(text):
+    return (text[:-1] + ('ə' if text[-1]=='o' else text[-1]))
 def get_words(doc):
     wds=[]
     for sent in doc.sentences:
         for w in sent.words:
         # when misc is not present, there's a compound
 #            if w.upos in ['VERB', 'ADJ', 'NOUN', 'PROPN', 'NUM'] and w.misc:
-            if w.upos in ['VERB', 'NOUN'] and w.misc:
+            if w.upos in ['VERB', 'NOUN', 'ADJ'] and w.misc:
                 lemma=w.lemma
                 # we force lemma when it's null
                 if not lemma and w.text in corrections.keys():
                     lemma=corrections[w.text]
                 if lemma in excluded_lemmas:
-                    continue                    
+                    continue
+                if w.upos=='ADJ':
+                    lemma=fix_adjective(lemma)
                 wds.append((w.text, lemma, w.upos))
     return list(set(wds))
 
