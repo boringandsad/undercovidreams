@@ -62,7 +62,7 @@ def get_words(doc):
                 if w.upos=='ADJ':
                     lemma=fix_adjective(lemma)
                 wds.append((w.text, lemma, w.upos))
-    return list(set(wds))
+    return wds
 
 def get_word_vectors(words):
     return [spacynlp(word).vector for word in words if word != None]
@@ -72,24 +72,14 @@ dreamsinfo=json.load(fp)
 for d in dreamsinfo:
     d["words"]=get_words(nlp(d["text"].lower()))
 
-allwords_verbs=[]
-allwords_nouns=[]
+allwords=[]
 for dream in dreamsinfo:
     for _,word,upos in dream['words']:
-        if upos=='VERB':
-            allwords_verbs.append(word)
-        else:
-            allwords_nouns.append(word)
-allwords_verbs==list(set(allwords_verbs))
-allwords_nouns==list(set(allwords_nouns))
+        allwords.append(word)
 
 pca = PCA(n_components=3)
-pca.fit(get_word_vectors(allwords_verbs))
-words2d_verbs=pca.transform(get_word_vectors(allwords_verbs)).tolist()
-words2d_nouns=pca.transform(get_word_vectors(allwords_nouns)).tolist()
-allwords=allwords_verbs+allwords_nouns
-words2d=words2d_verbs+words2d_nouns
-#print(allwords_verbs)
+pca.fit(get_word_vectors(allwords))
+words2d=pca.transform(get_word_vectors(allwords)).tolist()
 data_words=[(w, coord) for w, coord in zip(allwords,words2d)]
 
 data_words_map={}
