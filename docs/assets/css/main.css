@@ -1,18 +1,46 @@
-body, html {
-    padding:0;
-    margin:0;
-    height: 100%;
-    width: 100%;
-}
-div.tooltip {
-  position: absolute;
-  text-align: center;
-  width: 60px;
-  height: 28px;
-  padding: 2px;
-  font: 14px sans-serif;
-  color: white;
-  border: 0px;
-  border-radius: 8px;
-  pointer-events: none;
-}
+    body {
+        margin: 0;
+        font-family: Helvetica, sans-serif;
+    }
+    .word {
+ 				text-align: center;
+        font-size: 3px;
+				line-height: normal;
+        color: rgba(127,200,200,0.1);
+		}
+    .panel {
+        background-color: rgba(255,255,255,0.2);
+        color: rgb(127,200,200,0.5);
+		    position: absolute;
+		    z-index: 100;
+		    padding: 10px;
+        size: 50px;
+        padding-left: 40px;
+        padding-right: 40px;          
+        border-radius: 5px;
+        bottom: 5%;
+    }
+    #about {
+//        color: rgba(0,0,0,0.8);
+        color: rgb(127,200,200,1);
+		    position: absolute;
+        top: 5%;
+        width: 30%;
+        left: 30%;
+        top: 20%;
+        height: 50%;
+        display: none;
+    }
+    #info {
+        right: 5%;
+    }
+    #controls {
+        left: 45%;
+        visibility: hidden;
+		}
+    .in-use {
+        color: white;
+    }
+    .clickable {
+        cursor: pointer;
+    }
