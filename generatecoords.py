@@ -77,8 +77,18 @@ corrections["vedi"]="vedere"
 corrections["vestita"]="vestito"
 corrections["volassi"]="volare"
 corrections["granule"]="granulo"
+
 excluded_lemmas=["avere", "essere", "potere", "dovere", "sognare", "sogno", "certo", "altro","po'"]
-def degender_adjective(text):
+
+# hash containing the degendered version of the adjectives
+degendered_adj={}
+
+# returns the degendered adjecting or the word itself
+def degender_word(w):
+    return degendered_adj[w] if w in degendered_adj.keys() else w
+
+# replace ending -o with schwa symbol
+def degender_adj(text):
     return (text[:-1] + ('ə' if text[-1]=='o' else text[-1]))
 
 def get_words(doc):
@@ -98,6 +108,8 @@ def get_words(doc):
                     lemma=corrections[w.text]
                 if lemma in excluded_lemmas:
                     continue
+                if w.upos == 'ADJ':
+                    degendered_adj[lemma]=degender_adj(lemma)
 #                if w.upos=='ADJ':
 #                    lemma=fix_adjective(lemma)
                 wds.append((w.text, lemma, w.upos))
@@ -110,31 +122,39 @@ fp= open('dreamsinfo.json', 'r')
 dreamsinfo=json.load(fp)
 for d in dreamsinfo:
     d["words"]=get_words(nlp(d["text"]))
-#    print(d)
 
 allwords=[]
 for dream in dreamsinfo:
     for _,word,upos in dream['words']:
-        allwords.append(upos)
+        allwords.append(word)
 
 print("Generating coords")
 pca = PCA(n_components=3)
 pca.fit(get_word_vectors(allwords))
 words2d=pca.transform(get_word_vectors(allwords)).tolist()
-data_words=[(w, coord) for w, coord in zip(allwords,words2d)]
-
-data_words_map={}
-for w,coord in data_words:
-    data_words_map[w]=coord
+data_words=[(degender_word(w), coord) for w, coord in zip(allwords,words2d)]
 
 with open('words.json', 'w') as outfile:
     json.dump(data_words, outfile, sort_keys=True, indent=3, ensure_ascii=False)
 
+data_words_map={}
+for w,coord in data_words:
+    data_words_map[w]=coord    
+
+    
+# we replace the words inside the dreams with the degendered version
+for dream in dreamsinfo:
+    newwords=[]
+    oldwords=dream["words"]
+    for (x,w,y) in oldwords:
+        newwords.append((x,degender_word(w),y))
+    dream["words"]=newwords
+        
 for dream in dreamsinfo:
     c_x=0
     c_y=0
     c_z=0
-    for (_,w,_) in dream['words']:
+    for (_,w,_) in dream['words']:        
         c_x+=data_words_map[w][0]
         c_y+=data_words_map[w][1]
         c_z+=data_words_map[w][2]
