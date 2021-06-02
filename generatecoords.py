@@ -78,7 +78,7 @@ corrections["vestita"]="vestito"
 corrections["volassi"]="volare"
 corrections["granule"]="granulo"
 excluded_lemmas=["avere", "essere", "potere", "dovere", "sognare", "sogno", "certo", "altro","po'"]
-def fix_adjective(text):
+def degender_adjective(text):
     return (text[:-1] + ('ə' if text[-1]=='o' else text[-1]))
 
 def get_words(doc):
@@ -115,8 +115,9 @@ for d in dreamsinfo:
 allwords=[]
 for dream in dreamsinfo:
     for _,word,upos in dream['words']:
-        allwords.append(word)
-print("!")
+        allwords.append(upos)
+
+print("Generating coords")
 pca = PCA(n_components=3)
 pca.fit(get_word_vectors(allwords))
 words2d=pca.transform(get_word_vectors(allwords)).tolist()
