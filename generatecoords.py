@@ -15,37 +15,72 @@ from sklearn.decomposition import PCA
 corrections={}
 corrections["abbraccia"]="abbracciare"
 corrections["abbracciati"]="abbracciato"
+corrections["allontaniamo"]="allontanare"
 corrections["andando"]="andare"
 corrections["andate"]="andare"
 corrections["aperti"]="aperto"
 corrections["aprendo"]="aprire"
+corrections["attoniti"]="attonito"
 corrections["avendo"]="avere"
+corrections["avventate"]="avventato"
 corrections["avviamo"]="avviare"
 corrections["avviando"]="avviare"
 corrections["bevi"]="bere"
+corrections["busserò"]="bussare"
+corrections["capiamo"]="capire"
+corrections["cenire"]="cenare"
+corrections["capii"]="capire"
 corrections["chiedendo"]="chiedere"
 corrections["chiudi"]="chiudere"
+corrections["cimici"]="cimice"
 corrections["connessa"]="connesso"
 corrections["dicendo"]="dire"
 corrections["dicendo"]="dire"
+corrections["distratto"]="distratto"
 corrections["facendo"]="fare"
 corrections["finiamo"]="finire"
 corrections["godendo"]="godere"
 corrections["inizia"]="iniziare"
 corrections["iniziamo"]="iniziare"
+corrections["intravedo"]="intravedere"
+corrections["lavarmi"]="lavare"
+corrections["innervosivo"]="innervosire"
+corrections["disoriento"]="disorientare"
+corrections["lividi"]="livido"
+corrections["prelievi"]="prelievo"
+corrections["dimentico"]="dimenticare"
+corrections["prendermi"]="prendere"
+corrections["mcdonald'"]="mcdonald"
 corrections["mettiamo"]="mettere"
+corrections["orchi"]="orco"
 corrections["offesa"]="offeso"
+corrections["paracadute"]="paracadute"
+corrections["passire"]="passare"
 corrections["porta"]="portare"
 corrections["portiamo"]="portare"
+corrections["proviamo"]="provire"
+corrections["puliamo"]="pulire"
+corrections["rassereno"]="rasserenare"
 corrections["ridiamo"]="ridere"
+corrections["riaprano"]="riaprire"
+corrections["risveglio"]="risvegliare"
+corrections["vivevamo"]="vivere"
+corrections["sore'"]="sorella"
+corrections["spa"]="spa"
 corrections["spente"]="spento"
+corrections["supereroi"]="supereroe"
+corrections["succhiassi"]="succhiare"
+corrections["svegliere"]="svegliare"
 corrections["tieni"]="tenere"
 corrections["vedendo"]="vedere"
 corrections["vedi"]="vedere"
 corrections["vestita"]="vestito"
+corrections["volassi"]="volare"
+corrections["granule"]="granulo"
 excluded_lemmas=["avere", "essere", "potere", "dovere", "sognare", "sogno", "certo", "altro","po'"]
 def fix_adjective(text):
     return (text[:-1] + ('ə' if text[-1]=='o' else text[-1]))
+
 def get_words(doc):
     wds=[]
     for sent in doc.sentences:
@@ -54,13 +89,17 @@ def get_words(doc):
 #            if w.upos in ['VERB', 'ADJ', 'NOUN', 'PROPN', 'NUM'] and w.misc:
             if w.upos in ['VERB', 'NOUN', 'ADJ'] and w.misc:
                 lemma=w.lemma
-                # we force lemma when it's null
-                if not lemma and w.text in corrections.keys():
+                # sometimes lemma can be null. in that case...
+                if not lemma:
+                    lemma=w.text # ...we put the text into the lemma. In case it will be fixed via the corrections
+                if lemma in corrections.keys():
+                    lemma=corrections[lemma]
+                if w.text in corrections.keys():
                     lemma=corrections[w.text]
                 if lemma in excluded_lemmas:
                     continue
-                if w.upos=='ADJ':
-                    lemma=fix_adjective(lemma)
+#                if w.upos=='ADJ':
+#                    lemma=fix_adjective(lemma)
                 wds.append((w.text, lemma, w.upos))
     return wds
 
@@ -70,13 +109,14 @@ def get_word_vectors(words):
 fp= open('dreamsinfo.json', 'r')
 dreamsinfo=json.load(fp)
 for d in dreamsinfo:
-    d["words"]=get_words(nlp(d["text"].lower()))
+    d["words"]=get_words(nlp(d["text"]))
+#    print(d)
 
 allwords=[]
 for dream in dreamsinfo:
     for _,word,upos in dream['words']:
         allwords.append(word)
-
+print("!")
 pca = PCA(n_components=3)
 pca.fit(get_word_vectors(allwords))
 words2d=pca.transform(get_word_vectors(allwords)).tolist()
