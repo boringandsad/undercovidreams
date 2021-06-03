@@ -323,7 +323,7 @@
                       audioLoader.load("assets/data/audio/"+selected_dream.info["audiofile"], function( buffer ) {
                           sound.setBuffer( buffer );
 	                        sound.setLoop( false );
-	                        sound.setVolume( 0.8 );
+	                        sound.setVolume( 1 );
                           enabled_controls = true;
                           playaudio();
                           sound.onEnded = function (){show_all_dreams()};
