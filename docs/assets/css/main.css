@@ -45,6 +45,14 @@
         top: -50%;
     }
 
+    #closebutton {
+        color: rgba(255,255,255, 0.6);
+        position: absolute;
+        right: 5%;
+        top: 5%;
+        display: none;
+    }
+    
     #info {
         right: 5%;
     }

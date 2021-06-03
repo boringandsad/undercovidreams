@@ -30,6 +30,10 @@
         <span class="material-icons" style="font-size: 160px">zoom_out_map</span>
       </div>
     </div>
+    <div id="closebutton">
+        <span class="material-icons">close</span>
+    </div>
+    
     <script type="module">
       
       import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';      
@@ -214,6 +218,7 @@
           
           function show_all_dreams() {
               enabled_controls = false;
+              $("#closebutton").hide();
               const full_duration=1200;
               var tween = new TWEEN.Tween(selected_dream.scale).
                   to({x: 1, y: 1, z: 1}, full_duration).
@@ -307,16 +312,15 @@
                   easing(TWEEN.Easing.Exponential.InOut).
                   onComplete(function() {
                       const audioLoader = new THREE.AudioLoader();
-                      //                      alert(selected_dream.info["audiofile"]);
                       audioLoader.load("assets/data/audio/"+selected_dream.info["audiofile"], function( buffer ) {
                           sound.setBuffer( buffer );
 	                        sound.setLoop( false );
-	                        sound.setVolume( 0.8);
-                          //	                  sound.play();
+	                        sound.setVolume( 0.8 );
                           enabled_controls = true;
                           playaudio();
                           sound.onEnded = function (){show_all_dreams()};
                       });
+                      $("#closebutton").show();
                       $("#controls").css("visibility", "visible");
                       $("#pausebutton").click(function () {pauseaudio();});
                       $("#playbutton").click(function () {playaudio();});
