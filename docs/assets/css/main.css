@@ -23,6 +23,7 @@
     }
     #about {
         color: rgb(127,200,200,1);
+        background-color: rgba(100,100,100,0.8);
 		    position: absolute;
         top: 5%;
         width: 30%;
@@ -51,7 +52,14 @@
         position: absolute;
         left: 5%;
         top: 5%;
+        cursor: pointer;
         display: none;
+    }
+
+    #closebutton {
+        position: absolute;
+        cursor: pointer;
+        right: 5%;
     }
     
     #info {

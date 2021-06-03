@@ -14,6 +14,10 @@
   </head>
   <body>
     <div id="about" class="panel">
+      <div id="closebutton">
+        <span class="material-icons">close</span>
+      </div>
+
       <h3>Undercovidreams</h3>      
       <p>
         I risvegli lenti riportano alla mente i sogni.
@@ -239,6 +243,11 @@ var spinner = new Spinner(opts).spin(target);
           $("#info").click(function () {
               $("#about").toggle();
           });
+
+          $("#closebutton").click(function () {
+              $("#about").hide();
+          });
+
           
           /* audio */
           const listener = new THREE.AudioListener();
