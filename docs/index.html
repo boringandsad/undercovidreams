@@ -10,6 +10,7 @@
     <script src="https://d3js.org/queue.v1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link type="text/css" rel="stylesheet" href="assets/css/main.css">
+    <link type="text/css" rel="stylesheet" href="assets/css/spin.css">
   </head>
   <body>
     <div id="about" class="panel">
@@ -18,7 +19,7 @@
         I risvegli lenti riportano alla mente i sogni.
         In questi giorni insoliti, ti chiediamo di condividere i tuoi.
       </p>
-    </div>    
+    </div>
     <div id="controls" class="panel">
       <i id="playbutton" class="material-icons clickable">play_arrow</i>
       <i id="pausebutton" class="material-icons clickable">pause</i>
@@ -42,6 +43,31 @@
       import { CSS3DRenderer, CSS3DObject } from "https://threejs.org/examples/jsm/renderers/CSS3DRenderer.js";
       import { TWEEN} from "https://threejs.org/examples/jsm/libs/tween.module.min.js";
 
+      import {Spinner} from './assets/js/spin.js';
+var opts = {
+  lines: 13, // The number of lines to draw
+  length: 5, // The length of each line
+  width: 7, // The line thickness
+  radius: 27, // The radius of the inner circle
+  scale: 1.1, // Scales overall size of the spinner
+  corners: 0, // Corner roundness (0..1)
+  speed: 1, // Rounds per second
+  rotate: 0, // The rotation offset
+  animation: 'spinner-line-fade-quick', // The CSS animation name for the lines
+  direction: 1, // 1: clockwise, -1: counterclockwise
+  color: '#ffffff', // CSS color or array of colors
+  fadeColor: 'transparent', // CSS color or array of colors
+  top: '50%', // Top position relative to parent
+  left: '50%', // Left position relative to parent
+  shadow: '0 0 1px transparent', // Box-shadow for the lines
+  zIndex: 2000000000, // The z-index (defaults to 2e9)
+  className: 'spinner', // The CSS class to assign to the spinner
+  position: 'absolute', // Element positioning
+};
+
+var target = document.getElementsByTagName('body')[0];
+var spinner = new Spinner(opts).spin(target);
+      
       /* if controls are enabled. disabled in the beginning and during tweens to avoid tweens overlapping and other mess */
       var enabled_controls = false;
       /* if we are still in the intro. it lasts until the distance of the camera from the center is below the intro_distance_threshold */
@@ -67,6 +93,8 @@
     .awaitAll(function(error, data) {
         if (error)
             throw error;
+        $("#intro").show();
+        $("#info").show();
         init(data[0], data[1]);
     });
       
@@ -207,7 +235,7 @@
           renderer2.render( scene, camera );
           
           requestAnimationFrame(render);
-          
+          spinner.stop();
           
           //    alert($("#info"));
          
