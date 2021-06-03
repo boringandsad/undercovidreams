@@ -39,7 +39,7 @@
     }
 
     #intro div {
-        color: white;
+        color: rgba(255,255,255, 0.6);
 		    position: relative;
         left: -50%;
         top: -50%;
