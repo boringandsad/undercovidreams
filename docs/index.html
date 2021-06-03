@@ -6,7 +6,8 @@
 		<meta charset="utf-8">
 		<title>Undercovidreams</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="assets/js/d3.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/queue.v1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link type="text/css" rel="stylesheet" href="assets/css/main.css">
   </head>
@@ -59,19 +60,17 @@
       var dreams_opacity = 0.1;
       var sphere_radius = 2;
 
+      queue(2)
+    .defer(d3.json, "assets/data/words.json")
+    .defer(d3.json, "assets/data/dreams.json")
+    .awaitAll(function(error, data) {
+        if (error)
+            throw error;
+        init(data[0], data[1]);
+    });
       
-      d3.json("assets/data/dreams.json").then(
-          function(dreams){
-              d3.json("assets/data/words.json").then(
-                  function(words){
-                      setTimeout(function(){
-                          init(words,dreams);
-                      },1000);
-                  });
-          }
-      );
-      
-      function init(words_data,dreams_data) {
+           
+      function init(words_data, dreams_data) {
           const scene = new THREE.Scene();
           
           const renderer = new THREE.WebGLRenderer({antialias: false});
@@ -113,6 +112,7 @@
           const zscale=10;
           
           /* words data */
+
           words_data.forEach(function(d) {
               if (d[0] in words)
                   words[d[0]]["num"]++;
@@ -163,7 +163,6 @@
           var center=[0,0,0];
           var dreams=[]; //general infos
           var dreams_points=[]; // scene points
-          
           dreams_data.forEach(function(d){
               const info={};
               dreams.push(info);
