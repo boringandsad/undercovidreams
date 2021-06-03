@@ -21,7 +21,6 @@
         bottom: 5%;
     }
     #about {
-//        color: rgba(0,0,0,0.8);
         color: rgb(127,200,200,1);
 		    position: absolute;
         top: 5%;
@@ -31,6 +30,21 @@
         height: 50%;
         display: none;
     }
+
+    #intro {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        display: visible;
+    }
+
+    #intro div {
+        color: white;
+		    position: relative;
+        left: -50%;
+        top: -50%;
+    }
+
     #info {
         right: 5%;
     }
