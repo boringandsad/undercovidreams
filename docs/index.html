@@ -6,18 +6,17 @@
 		<meta charset="utf-8">
 		<title>Undercovidreams</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="assets/css/main.css">
+    <link type="text/css" rel="stylesheet" href="assets/css/spin.css">
     <script src="https://d3js.org/d3.v3.min.js"></script>
     <script src="https://d3js.org/queue.v1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link type="text/css" rel="stylesheet" href="assets/css/main.css">
-    <link type="text/css" rel="stylesheet" href="assets/css/spin.css">
   </head>
   <body>
     <div id="about" class="panel">
       <div id="closebutton">
         <span class="material-icons">close</span>
       </div>
-
       <h3>Undercovidreams</h3>      
       <p>
         I risvegli lenti riportano alla mente i sogni.
@@ -37,7 +36,7 @@
       </div>
     </div>
     <div id="backbutton">
-        <span class="material-icons">arrow_back_ios</span>
+      <span class="material-icons">arrow_back_ios</span>
     </div>
     
     <script type="module">
@@ -48,29 +47,29 @@
       import { TWEEN} from "https://threejs.org/examples/jsm/libs/tween.module.min.js";
 
       import {Spinner} from './assets/js/spin.js';
-var opts = {
-  lines: 13, // The number of lines to draw
-  length: 5, // The length of each line
-  width: 7, // The line thickness
-  radius: 27, // The radius of the inner circle
-  scale: 1.1, // Scales overall size of the spinner
-  corners: 0, // Corner roundness (0..1)
-  speed: 1, // Rounds per second
-  rotate: 0, // The rotation offset
-  animation: 'spinner-line-fade-quick', // The CSS animation name for the lines
-  direction: 1, // 1: clockwise, -1: counterclockwise
-  color: '#ffffff', // CSS color or array of colors
-  fadeColor: 'transparent', // CSS color or array of colors
-  top: '50%', // Top position relative to parent
-  left: '50%', // Left position relative to parent
-  shadow: '0 0 1px transparent', // Box-shadow for the lines
-  zIndex: 2000000000, // The z-index (defaults to 2e9)
-  className: 'spinner', // The CSS class to assign to the spinner
-  position: 'absolute', // Element positioning
-};
+      var opts = {
+          lines: 13, // The number of lines to draw
+          length: 5, // The length of each line
+          width: 7, // The line thickness
+          radius: 27, // The radius of the inner circle
+          scale: 1.1, // Scales overall size of the spinner
+          corners: 0, // Corner roundness (0..1)
+          speed: 1, // Rounds per second
+          rotate: 0, // The rotation offset
+          animation: 'spinner-line-fade-quick', // The CSS animation name for the lines
+          direction: 1, // 1: clockwise, -1: counterclockwise
+          color: '#ffffff', // CSS color or array of colors
+          fadeColor: 'transparent', // CSS color or array of colors
+          top: '50%', // Top position relative to parent
+          left: '50%', // Left position relative to parent
+          shadow: '0 0 1px transparent', // Box-shadow for the lines
+          zIndex: 2000000000, // The z-index (defaults to 2e9)
+          className: 'spinner', // The CSS class to assign to the spinner
+          position: 'absolute', // Element positioning
+      };
 
-var target = document.getElementsByTagName('body')[0];
-var spinner = new Spinner(opts).spin(target);
+      var target = document.getElementsByTagName('body')[0];
+      var spinner = new Spinner(opts).spin(target);
       
       /* if controls are enabled. disabled in the beginning and during tweens to avoid tweens overlapping and other mess */
       var enabled_controls = false;
@@ -97,12 +96,12 @@ var spinner = new Spinner(opts).spin(target);
     .awaitAll(function(error, data) {
         if (error)
             throw error;
-        $("#intro").show();
+//        $("#intro").show();
         $("#info").show();
         init(data[0], data[1]);
     });
       
-           
+      
       function init(words_data, dreams_data) {
           const scene = new THREE.Scene();
           
@@ -387,7 +386,7 @@ var spinner = new Spinner(opts).spin(target);
           }
           function handleClick() {
               if (mouseMoved) return;
-//              alert(enabled_controls);
+              //              alert(enabled_controls);
               if (!enabled_controls) return;
               var distance=centerVect.distanceTo(camera.position);
               //        alert(view_mode());
@@ -435,7 +434,7 @@ var spinner = new Spinner(opts).spin(target);
               enabled_controls = true;
               //              alert(enabled_controls);
               var tween = new TWEEN.Tween($("#intro").css('opacity')).to
-//              $("#intro").hide();
+              //              $("#intro").hide();
               $("#intro").fadeTo("slow", 0, function() {
                   $("#intro").hide();
               });
@@ -454,10 +453,10 @@ var spinner = new Spinner(opts).spin(target);
           
           function update(){
               if (mode()=="intro") {
-                  const camera_distance = camera.position.distanceTo(new THREE.Vector3(0,0,0));
-                  if (camera_distance<intro_distance_threshold) {
+//                  const camera_distance = camera.position.distanceTo(new THREE.Vector3(0,0,0));
+//                  if (camera_distance<intro_distance_threshold) {
                       exploration_mode();
-                  }
+//                  }
               }
 
               controls.update();
