@@ -97,7 +97,7 @@ def get_words(doc):
         for w in sent.words:
         # when misc is not present, there's a compound
 #            if w.upos in ['VERB', 'ADJ', 'NOUN', 'PROPN', 'NUM'] and w.misc:
-            if w.upos in ['VERB', 'NOUN', 'ADJ'] and w.misc:
+            if w.upos in ['VERB', 'NOUN', 'ADJ', 'PROPN', 'NUM'] and w.misc:
                 lemma=w.lemma
                 # sometimes lemma can be null. in that case...
                 if not lemma:
