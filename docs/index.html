@@ -27,11 +27,11 @@
     </div>    
     <div id="intro">
       <div>
-        <span class="material-icons" style="font-size: 160px">zoom_out_map</span>
+        <span class="material-icons" style="font-size: 100px">zoom_out_map</span>
       </div>
     </div>
-    <div id="closebutton">
-        <span class="material-icons">close</span>
+    <div id="backbutton">
+        <span class="material-icons">arrow_back_ios</span>
     </div>
     
     <script type="module">
@@ -218,7 +218,7 @@
           
           function show_all_dreams() {
               enabled_controls = false;
-              $("#closebutton").hide();
+              $("#backbutton").hide();
               const full_duration=1200;
               var tween = new TWEEN.Tween(selected_dream.scale).
                   to({x: 1, y: 1, z: 1}, full_duration).
@@ -320,7 +320,7 @@
                           playaudio();
                           sound.onEnded = function (){show_all_dreams()};
                       });
-                      $("#closebutton").show();
+                      $("#backbutton").show();
                       $("#controls").css("visibility", "visible");
                       $("#pausebutton").click(function () {pauseaudio();});
                       $("#playbutton").click(function () {playaudio();});
@@ -391,9 +391,12 @@
           function exploration_mode(){
               intro = false;
               enabled_controls = true;
-//              alert(enabled_controls);
-              $("#intro").hide();
-              
+              //              alert(enabled_controls);
+              var tween = new TWEEN.Tween($("#intro").css('opacity')).to
+//              $("#intro").hide();
+              $("#intro").fadeTo("slow", 0, function() {
+                  $("#intro").hide();
+              });
               container.addEventListener( 'pointermove', e => {
                   mouseMoved=true;
                   onMouseMove(e);

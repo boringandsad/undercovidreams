@@ -45,10 +45,10 @@
         top: -50%;
     }
 
-    #closebutton {
+    #backbutton {
         color: rgba(255,255,255, 0.6);
         position: absolute;
-        right: 5%;
+        left: 5%;
         top: 5%;
         display: none;
     }
