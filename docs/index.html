@@ -38,7 +38,7 @@
     <div id="backbutton">
       <span class="material-icons">arrow_back_ios</span>
     </div>
-    
+
     <script type="module">
       
       import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';      
@@ -161,6 +161,7 @@
           const vertices = [];
           const VERTNUM=Object.keys(words).length;
           const loader = new THREE.TextureLoader();
+          const wordsprite = loader.load("assets/data/word.png");
           for (const [k, w] of Object.entries(words)) {
               vertices.push(w["x"],w["y"],w["z"]);
               
@@ -184,7 +185,7 @@
               /* start point */
               const geometry = new THREE.BufferGeometry();
               geometry.setAttribute( 'position', new THREE.Float32BufferAttribute([w["x"], w["y"], w["z"]], 3));
-              const wordsprite = loader.load("assets/data/word.png");
+
               const material = new THREE.PointsMaterial({size: 1, map: wordsprite, transparent: true, blending: THREE.AdditiveBlending, depthTest: false});            
               const star = new THREE.Points( geometry, material );
               scene.add( star );              
@@ -210,6 +211,7 @@
               // we don't need the full array!
               info["words"]=d["words"];
               const dream_geometry = new THREE.SphereGeometry(sphere_radius, 16, 16);
+
               var material = new THREE.MeshBasicMaterial({
                   color: 0x7FC8C8,                  
                   wireframe: true,
@@ -270,6 +272,7 @@
                   easing(TWEEN.Easing.Exponential.InOut).
                   onComplete(function() {
                       enabled_controls = true;
+
                   }).
                   start();
 
@@ -320,7 +323,7 @@
                  the latter is needed to calculate the scaling of the sphere
               */
               const dreamwords=[];
-              const coords=selected_dream.info["coords"]
+              const coords=selected_dream.info["coords"];
               const dream_center=new THREE.Vector3(coords[0], coords[1], coords[2]);
               let farest=0;
               selected_dream.info["words"].forEach(function(w) {
@@ -386,6 +389,10 @@
           }
           function handleClick() {
               if (mouseMoved) return;
+              console.log("Scene polycount:", renderer.info.render.triangles);
+              console.log("Active Drawcalls:", renderer.info.render.calls);
+              console.log("Textures in Memory", renderer.info.memory.textures);
+              console.log("Geometries in Memory", renderer.info.memory.geometries);
               //              alert(enabled_controls);
               if (!enabled_controls) return;
               var distance=centerVect.distanceTo(camera.position);
