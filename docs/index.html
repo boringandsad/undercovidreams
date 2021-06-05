@@ -96,7 +96,6 @@
     .awaitAll(function(error, data) {
         if (error)
             throw error;
-//        $("#intro").show();
         $("#info").show();
         init(data[0], data[1]);
     });
@@ -104,8 +103,17 @@
       
       function init(words_data, dreams_data) {
           const scene = new THREE.Scene();
-          
-          const renderer = new THREE.WebGLRenderer({antialias: false});
+
+          let pixelRatio = window.devicePixelRatio;
+          let AA = true;
+          if (pixelRatio > 1) {
+              AA = false
+          }
+
+          const renderer = new THREE.WebGLRenderer({
+              antialias: AA,
+              powerPreference: "high-performance",
+          });
           const container = document.createElement('div');
           document.body.appendChild(container);
           container.appendChild( renderer.domElement );
@@ -210,7 +218,7 @@
                   info["audiofile"]=d["audio"];
               // we don't need the full array!
               info["words"]=d["words"];
-              const dream_geometry = new THREE.SphereGeometry(sphere_radius, 16, 16);
+              const dream_geometry = new THREE.SphereBufferGeometry(sphere_radius, 16, 16);
 
               var material = new THREE.MeshBasicMaterial({
                   color: 0x7FC8C8,                  
@@ -389,10 +397,15 @@
           }
           function handleClick() {
               if (mouseMoved) return;
-              console.log("Scene polycount:", renderer.info.render.triangles);
-              console.log("Active Drawcalls:", renderer.info.render.calls);
-              console.log("Textures in Memory", renderer.info.memory.textures);
-              console.log("Geometries in Memory", renderer.info.memory.geometries);
+              console.log("[renderer] Scene polycount:", renderer.info.render.triangles);
+              console.log("[renderer] Active Drawcalls:", renderer.info.render.calls);
+              console.log("[renderer] Textures in Memory", renderer.info.memory.textures);
+              console.log("[renderer] Geometries in Memory", renderer.info.memory.geometries);
+/*              console.log("[renderer2] Scene polycount:", renderer2.info.render.triangles);
+              console.log("[renderer2] Active Drawcalls:", renderer2.info.render.calls);
+              console.log("[renderer2] Textures in Memory", renderer2.info.memory.textures);
+              console.log("[renderer2] Geometries in Memory", renderer2.info.memory.geometries);*/
+
               //              alert(enabled_controls);
               if (!enabled_controls) return;
               var distance=centerVect.distanceTo(camera.position);
