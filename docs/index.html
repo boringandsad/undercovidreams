@@ -76,6 +76,9 @@
       /* if we are still in the intro. it lasts until the distance of the camera from the center is below the intro_distance_threshold */
       var intro = true;
       var intro_distance_threshold = 400;
+      /* when showing all dreams, only words with a threshold > than the following will be visible. this improves a lot the performances and 
+       changes little the visualization */
+      var word_alpha_threshold = 0.1;
       var words={};
       /* selected_dream is the dream we are currently looking and listening to. if there's any */
       /* focused_dream is the dream, if any, currently below the mouse cursor */
@@ -109,22 +112,26 @@
           if (pixelRatio > 1) {
               AA = false
           }
-
           const renderer = new THREE.WebGLRenderer({
               antialias: AA,
               powerPreference: "high-performance",
           });
+
           const container = document.createElement('div');
           document.body.appendChild(container);
           container.appendChild( renderer.domElement );
           
-          renderer2 = new CSS3DRenderer();
+          renderer2 = new CSS3DRenderer({
+              antialias: AA,
+              powerPreference: "high-performance",
+          });
+
 		      renderer2.domElement.style.position = 'absolute';
 		      renderer2.domElement.style.top = 0;
 		      container.appendChild( renderer2.domElement );
           
           /* camera */
-          const camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 0.1, 20000 );
+          const camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 0.1, 20000);
           camera.position.set( -200, -500, 300 );
           camera.lookAt( 0, 0, 0 );
           /* camera */
@@ -142,6 +149,7 @@
           
 		      controls.maxPolarAngle = Math.PI/2;
 
+          /* to improve performances we hide words while control is moving*/
           onWindowResize();
           window.addEventListener( 'resize', onWindowResize, false );
 
@@ -170,6 +178,13 @@
           const VERTNUM=Object.keys(words).length;
           const loader = new THREE.TextureLoader();
           const wordsprite = loader.load("assets/data/word.png");
+          const material = new THREE.PointsMaterial({
+              size: 1,
+              map: wordsprite,
+//              transparent: true,
+//              blending: THREE.AdditiveBlending,
+              depthTest: false});
+
           for (const [k, w] of Object.entries(words)) {
               vertices.push(w["x"],w["y"],w["z"]);
               
@@ -182,11 +197,14 @@
 				      objectCSS.position.y = w["y"]+1;
 				      objectCSS.position.z = w["z"];
               const min=3;
-              const alpha=0.01*min+0.01*Math.max(0,(w["num"]-min));              
+              const alpha=0.01*min+0.01*Math.max(0,(w["num"]-min));
               objectCSS.scaledColor="rgba(150,140,130,"+alpha+")";
               objectCSS.absoluteColor="rgba(150,140,130,0.6)";
               objectCSS.alpha=alpha;
               objectCSS.element.style.color=objectCSS.scaledColor;
+              if (alpha<word_alpha_threshold) {
+                  objectCSS.visible = false;
+              }
 				      scene.add( objectCSS );
               w["wordobject"]=objectCSS;
               
@@ -194,12 +212,12 @@
               const geometry = new THREE.BufferGeometry();
               geometry.setAttribute( 'position', new THREE.Float32BufferAttribute([w["x"], w["y"], w["z"]], 3));
 
-              const material = new THREE.PointsMaterial({size: 1, map: wordsprite, transparent: true, blending: THREE.AdditiveBlending, depthTest: false});            
+
               const star = new THREE.Points( geometry, material );
               scene.add( star );              
               w["starobject"]=star;
           }
-          
+
           /* dreams */
           
           var center=[0,0,0];
@@ -300,9 +318,11 @@
               });
               
               for (const [k, w] of Object.entries(words)) {
-                  w["wordobject"].visible=true;
                   w["starobject"].visible=true;
-                  w["wordobject"].element.style.color=w["wordobject"].scaledColor;
+                  if (w["wordobject"].alpha>=word_alpha_threshold) {
+                      w["wordobject"].visible=true;
+                      w["wordobject"].element.style.color=w["wordobject"].scaledColor;
+                  }
               }
               $("#controls").css("visibility", "hidden");
               sound.stop();
@@ -354,6 +374,7 @@
                           w["starobject"].visible=false;
                       }
                       else {
+                          w["wordobject"].visible=true;
                           w["wordobject"].element.style.color=w["wordobject"].absoluteColor;
                       }
                   }
@@ -396,15 +417,20 @@
               sound.pause();
           }
           function handleClick() {
-              if (mouseMoved) return;
               console.log("[renderer] Scene polycount:", renderer.info.render.triangles);
               console.log("[renderer] Active Drawcalls:", renderer.info.render.calls);
               console.log("[renderer] Textures in Memory", renderer.info.memory.textures);
               console.log("[renderer] Geometries in Memory", renderer.info.memory.geometries);
-/*              console.log("[renderer2] Scene polycount:", renderer2.info.render.triangles);
-              console.log("[renderer2] Active Drawcalls:", renderer2.info.render.calls);
-              console.log("[renderer2] Textures in Memory", renderer2.info.memory.textures);
-              console.log("[renderer2] Geometries in Memory", renderer2.info.memory.geometries);*/
+              if (mouseMoved) return;
+              
+              raycaster.setFromCamera( mouse, camera );
+              const intersects = raycaster.intersectObjects( dreams_points );
+              if (intersects.length>0) {
+                  focused_dream=intersects[0].object;
+              }
+              else {
+                  focused_dream=null;
+              }
 
               //              alert(enabled_controls);
               if (!enabled_controls) return;
@@ -484,13 +510,9 @@
 	            raycaster.setFromCamera( mouse, camera );        
               const intersects = raycaster.intersectObjects( dreams_points );
               
-              /* we look for the dream below the coursor only when we are in the "all" mode */
-              //        if (view_mode()!="all") return;
-
               if (intersects.length>0) {
-                  focused_dream=intersects[0].object;
                   document.getElementsByTagName("body")[0].style.cursor = "pointer";
-                  
+                  focused_dream=intersects[0].object;
               }
               else {
                   document.getElementsByTagName("body")[0].style.cursor = "default";
