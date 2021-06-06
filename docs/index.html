@@ -181,8 +181,8 @@
           const material = new THREE.PointsMaterial({
               size: 1,
               map: wordsprite,
-//              transparent: true,
-//              blending: THREE.AdditiveBlending,
+              transparent: true,
+              blending: THREE.AdditiveBlending,
               depthTest: false});
 
           for (const [k, w] of Object.entries(words)) {
