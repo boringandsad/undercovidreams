@@ -34,13 +34,14 @@
 
     #about {
         color: rgb(255,255,255,1);
-         background-color: rgb(127,200,200,0.7);
+        background-color: rgb(127,200,200,0.7);
         padding-left: 2%;
         padding-right: 2%;
         top: 5%;
         width: 50%;
         left: 23%;
         display: none;
+        overflow: scroll;
     }
     #techdetails {
         font-size: 0.8em;
