@@ -43,9 +43,7 @@
         display: none;
         overflow: scroll;
     }
-    #techdetails {
-        font-size: 0.8em;
-    }
+
     #intro {
         position: absolute;
         left: 50%;
