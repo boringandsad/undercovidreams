@@ -101,9 +101,6 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
           position: 'absolute', // Element positioning
       };
 
-      var target = document.getElementsByTagName('body')[0];
-      var spinner = new Spinner(opts).spin(target);
-      
       /* if controls are enabled. disabled in the beginning and during tweens to avoid tweens overlapping and other mess */
       var enabled_controls = false;
       /* if we are still in the intro. it lasts until the distance of the camera from the center is below the intro_distance_threshold */
@@ -125,6 +122,18 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
       var dreams_opacity = 0.1;
       var sphere_radius = 2;
 
+
+      if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+          // true for mobile device
+          var $div = $('<div>Mobile devices not supported. Please visit Undercovidreams from a desktop computer.</div>').appendTo('body');
+          $div.attr('id', 'disclaimer');
+          
+      }else{
+          // false for not mobile device
+      
+      var target = document.getElementsByTagName('body')[0];
+      var spinner = new Spinner(opts).spin(target);
+
       /* loading multiple json files in parallel, ie. using a queue of size = 2 */
       queue(2)
     .defer(d3.json, "assets/data/words.json")
@@ -135,6 +144,8 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
         $("#info").show();
         init(data[0], data[1]);
     });
+          alert("not mobile device");
+      }
       
       
       function init(words_data, dreams_data) {

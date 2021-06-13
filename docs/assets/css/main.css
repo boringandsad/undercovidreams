@@ -3,6 +3,16 @@
         background-color: black;
         font-family: Helvetica, sans-serif;
     }
+    #disclaimer {
+        color: white;
+        font-size: xx-large;
+        border: solid 1px white;
+        margin: auto;
+        position: absolute;
+        width: 50%;
+        top: 30%;
+        padding: 10px;
+    }
     .word {
  				text-align: center;
         font-size: 3px;
