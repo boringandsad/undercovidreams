@@ -27,12 +27,15 @@ corrections["avviamo"]="avviare"
 corrections["avviando"]="avviare"
 corrections["bevi"]="bere"
 corrections["busserò"]="bussare"
+corrections["Cala"]="cala"
 corrections["capiamo"]="capire"
 corrections["cenire"]="cenare"
 corrections["capii"]="capire"
 corrections["chiedendo"]="chiedere"
 corrections["chiudi"]="chiudere"
 corrections["cimici"]="cimice"
+corrections["conti"]="conto"
+corrections["incinta"]="incinta"
 corrections["connessa"]="connesso"
 corrections["dicendo"]="dire"
 corrections["dicendo"]="dire"
@@ -68,6 +71,7 @@ corrections["vivevamo"]="vivere"
 corrections["sore'"]="sorella"
 corrections["spa"]="spa"
 corrections["spente"]="spento"
+corrections["stessi"]="stare"
 corrections["supereroi"]="supereroe"
 corrections["succhiassi"]="succhiare"
 corrections["svegliere"]="svegliare"
@@ -77,6 +81,8 @@ corrections["vedi"]="vedere"
 corrections["vestita"]="vestito"
 corrections["volassi"]="volare"
 corrections["granule"]="granulo"
+
+not_adj=["urlo"]
 
 excluded_lemmas=["avere", "essere", "potere", "dovere", "sognare", "sogno", "certo", "altro","po'"]
 
@@ -108,7 +114,7 @@ def get_words(doc):
                     lemma=corrections[w.text]
                 if lemma in excluded_lemmas:
                     continue
-                if w.upos == 'ADJ':
+                if w.upos == 'ADJ' and not w.text in not_adj:
                     degendered_adj[lemma]=degender_adj(lemma)
 #                if w.upos=='ADJ':
 #                    lemma=fix_adjective(lemma)
