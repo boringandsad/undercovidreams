@@ -317,20 +317,22 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
           // global listener
           const listener = new THREE.AudioListener();
           camera.add( listener );
-
-          const dreamrecording = new THREE.Audio( listener );
-          const backgroundnoise = new THREE.Audio( listener );
-
           const audioLoader = new THREE.AudioLoader();
+          
+          const dreamrecording = new THREE.Audio( listener );
+/*          const backgroundnoise = new THREE.Audio( listener );
+         
           audioLoader.load("assets/data/audio/background.mp3", function( buffer ) {
+              backgroundnoise.autoplay = true;
               backgroundnoise.setBuffer( buffer );
 	            backgroundnoise.setLoop( true );
-	            backgroundnoise.setVolume( 0.004 );
-              backgroundnoise.play();
-//              alert(backgroundnoise.isPlaying);
-//              backgroundnoise.setVolume( 1 );
-          });
+	            backgroundnoise.setVolume( 0.02 );
+              playbackgroundnoise();
+          });*/
 
+
+          
+          
           function onWindowResize( event ) {
               camera.aspect = window.innerWidth / window.innerHeight;
               camera.updateProjectionMatrix();
@@ -448,7 +450,6 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
                   to({x: dreamscale, y: dreamscale, z: dreamscale}, 1200).
                   easing(TWEEN.Easing.Exponential.InOut).
                   onComplete(function() {
-                      const audioLoader = new THREE.AudioLoader();
                       audioLoader.load("assets/data/audio/"+selected_dream.info["audiofile"], function( buffer ) {
                           dreamrecording.setBuffer( buffer );
 	                        dreamrecording.setLoop( false );
@@ -471,6 +472,11 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
               dreamrecording.stop();
               playaudio();
           }
+
+          function playbackgroundnoise() {
+              backgroundnoise.play();
+          }
+          
           function playaudio(){
               $("#pausebutton").addClass("in-use");
               $("#restartbutton").addClass("in-use");
@@ -588,7 +594,6 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
 				      renderer2.render( scene, camera );
               
 		      }
-          
       }
 
 
