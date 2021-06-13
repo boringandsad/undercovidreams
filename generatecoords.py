@@ -86,23 +86,11 @@ not_adj=["urlo"]
 
 excluded_lemmas=["avere", "essere", "potere", "dovere", "sognare", "sogno", "certo", "altro","po'"]
 
-# hash containing the degendered version of the adjectives
-degendered_adj={}
-
-# returns the degendered adjecting or the word itself
-def degender_word(w):
-    return degendered_adj[w] if w in degendered_adj.keys() else w
-
-# replace ending -o with schwa symbol
-def degender_adj(text):
-    return (text[:-1] + ('ə' if text[-1]=='o' else text[-1]))
-
 def get_words(doc):
     wds=[]
     for sent in doc.sentences:
         for w in sent.words:
-        # when misc is not present, there's a compound
-#            if w.upos in ['VERB', 'ADJ', 'NOUN', 'PROPN', 'NUM'] and w.misc:
+            # when misc is not present, there's a compound
             if w.upos in ['VERB', 'NOUN', 'ADJ', 'PROPN', 'NUM'] and w.misc:
                 lemma=w.lemma
                 # sometimes lemma can be null. in that case...
@@ -114,56 +102,63 @@ def get_words(doc):
                     lemma=corrections[w.text]
                 if lemma in excluded_lemmas:
                     continue
-                if w.upos == 'ADJ' and not w.text in not_adj:
-                    degendered_adj[lemma]=degender_adj(lemma)
-#                if w.upos=='ADJ':
-#                    lemma=fix_adjective(lemma)
                 wds.append((w.text, lemma, w.upos))
     return wds
 
 def get_word_vectors(words):
     return [spacynlp(word).vector for word in words if word != None]
 
+# initially dreamsinfo contains only the dreams and the audio file info, read it from the file
 fp= open('dreamsinfo.json', 'r')
 dreamsinfo=json.load(fp)
+# then we add, for each dream, the list of its words
+# ie. for each of its word a triple (text, lemma, cat, deg_lemma)
+# where
+# text is the original word
+# lemma it's the correponding lemma
+# cat is the category, like e.g. ADJ for an adjective. See ucat in get_words function
+# deg_lemma is = lemma except for adjectives. for adjectives it's the
+# "degendered" version of it, ie. where schwa replaces the last letter
+# if it is a or o 
 for d in dreamsinfo:
     d["words"]=get_words(nlp(d["text"]))
 
+# an array with all words. either the original word or its lemma (if it's an adjective) 
 allwords=[]
 for dream in dreamsinfo:
-    for _,word,upos in dream['words']:
-        allwords.append(word)
+    for text,lemma,upos in dream['words']:
+        allwords.append(text)
 
 print("Generating coords")
 pca = PCA(n_components=3)
 pca.fit(get_word_vectors(allwords))
 words2d=pca.transform(get_word_vectors(allwords)).tolist()
-data_words=[(degender_word(w), coord) for w, coord in zip(allwords,words2d)]
+data_words=[(w, coord) for w, coord in zip(allwords,words2d)]
 
 with open('words.json', 'w') as outfile:
     json.dump(data_words, outfile, sort_keys=True, indent=3, ensure_ascii=False)
 
-data_words_map={}
+words_coords={}
 for w,coord in data_words:
-    data_words_map[w]=coord    
+    words_coords[w]=coord    
 
     
 # we replace the words inside the dreams with the degendered version
-for dream in dreamsinfo:
-    newwords=[]
-    oldwords=dream["words"]
-    for (x,w,y) in oldwords:
-        newwords.append((x,degender_word(w),y))
-    dream["words"]=newwords
-        
+#for dream in dreamsinfo:
+#    newwords=[]
+#    oldwords=dream["words"]
+#    for (x,w,y) in oldwords:
+#        newwords.append((x,w,y))
+#    dream["words"]=newwords
+
 for dream in dreamsinfo:
     c_x=0
     c_y=0
     c_z=0
-    for (_,w,_) in dream['words']:        
-        c_x+=data_words_map[w][0]
-        c_y+=data_words_map[w][1]
-        c_z+=data_words_map[w][2]
+    for w,_,_ in dream['words']:
+        c_x+=words_coords[w][0]
+        c_y+=words_coords[w][1]
+        c_z+=words_coords[w][2]
     c_x=c_x/len(dream['words']) 
     c_y=c_y/len(dream['words'])
     c_z=c_z/len(dream['words'])     
