@@ -17,15 +17,33 @@
       <div id="closebutton">
         <span class="material-icons">close</span>
       </div>
-      <h3>Undercovidreams</h3>      
-      <p>
-        I risvegli lenti riportano alla mente i sogni.
-        In questi giorni insoliti, ti chiediamo di condividere i tuoi.
-      </p>
+      <h3>Undercovidreams</h3>
+    <p>
+    <i>
+    Undercovidreams è un cielo di sogni raccolti in Italia durante  il lockdown severo del  2020.
+Interrogando le stelle puoi navigare nell'immaginario di persone che si sono trovate all'improvviso prigioniere di una situazione
+inattesa e spaventosa, che hanno deciso, però, di condividere con altri le elaborazioni notturne della loro mente.
+    Cosa sono infatti  i sogni se non i racconti, i desideri, le speranze, le paure, le emozioni che proprio come le
+stelle guidano chi si preoccupa di imparare a decifrarli?
+    </i>
+    </p>
+<p>
+Dal 11 Marzo al 4 Maggio 2020 il governo italiano applicò misure restrittive severe nel tentativo di fermare l’epidemia di Covid19. 
+Nell’arco di pochi giorni le città si svuotarono; i negozi, i  musei, le scuole, le biblioteche vennero chiuse e ai cittadini fu chiesto di spostarsi solo per le necessità più stringenti. Lo spazio pubblico divenne per alcuni all’improvviso un luogo altro, spaventoso, dove era in agguato il contagio. Per altri un posto interdetto solo per non precisati oscuri fini.
+    Raccogliere i sogni in quei giorni è stato un modo per stabilire un contatto profondo con  con tutti coloro che volevano condividere una parte inesplorata e vulnerabile di sé.
+    </p>
+    <p>
+Invitiamo tutte le persone che in quei giorni hanno appuntato un sogno o che si sono dedicate a raccolte analoghe a condividerle con noi. Sarebbe bello espandere il nostro cielo. Anche coloro che hanno raccolte di sogni in altre lingue possono inviarcele, provvederemo alla creazione di diverse galassie.
+</p>
+<p id="techdetails">
+[L’analisi dei sogni è stata fatta mediante l'uso di sistemi per l'analisi del linguaggio basati sul machine learning, le parole  sono state distribuite nello spazio secondo il criterio che vuole le parole tanto più simili quanto più vicine si trovano
+solitamente in un contesto.]
+</p>
     </div>
     <div id="controls" class="panel">
-      <i id="playbutton" class="material-icons clickable">play_arrow</i>
-      <i id="pausebutton" class="material-icons clickable">pause</i>
+    <i id="restartbutton" class="material-icons clickable">skip_previous</i>
+    <i id="playbutton" class="material-icons clickable">play_arrow</i>
+    <i id="pausebutton" class="material-icons clickable">pause</i>
     </div>
     <div id="info" class="panel">
       <span class="material-icons clickable">info</span>
@@ -35,9 +53,9 @@
         <span class="material-icons" style="font-size: 100px">zoom_out_map</span>
       </div>
     </div>
-    <div id="backbutton">
-      <span class="material-icons">arrow_back_ios</span>
-    </div>
+    <div id="backbutton" class="panel">
+      <span class="material-icons clickable">arrow_back_ios</span>
+    </div>    
 
     <script type="module">
       
@@ -237,9 +255,8 @@
               // we don't need the full array!
               info["words"]=d["words"];
               const dream_geometry = new THREE.SphereBufferGeometry(sphere_radius, 16, 16);
-
               var material = new THREE.MeshBasicMaterial({
-                  color: 0x7FC8C8,                  
+                  color: 0x7FC8C8,
                   wireframe: true,
                   wireframeLinewidth: 0.1,
                   opacity: dreams_opacity,
@@ -267,15 +284,10 @@
           
           requestAnimationFrame(render);
           spinner.stop();
-          $("#info").click(function () {
-              $("#about").toggle();
-          });
+          $("#info").click(function () { $("#about").toggle(); });
+          $("#closebutton").click(function () { $("#about").hide(); });
+          $("#backbutton").click(function() { show_all_dreams(); });
 
-          $("#closebutton").click(function () {
-              $("#about").hide();
-          });
-
-          
           /* audio */
           const listener = new THREE.AudioListener();
           camera.add( listener );
@@ -293,16 +305,18 @@
               $("#about").hide();
               $("#backbutton").hide();
               const full_duration=1200;
+              /* tween for dream-ball scaling down*/;
               var tween = new TWEEN.Tween(selected_dream.scale).
                   to({x: 1, y: 1, z: 1}, full_duration).
                   easing(TWEEN.Easing.Exponential.InOut).
                   onComplete(function() {
                       enabled_controls = true;
-
                   }).
                   start();
 
               const delay=600;
+
+              /* tween for showing all the other dreams */
               dreams_points.forEach(function(dream) {
                   if (dream!=selected_dream)
                   {
@@ -323,9 +337,13 @@
                       w["wordobject"].visible=true;
                       w["wordobject"].element.style.color=w["wordobject"].scaledColor;
                   }
+                  else {
+                      w["wordobject"].visible=false;
+                  }
               }
               $("#controls").css("visibility", "hidden");
               sound.stop();
+              selected_dream=null;
           }
           
           function show_selected_dream(){
@@ -339,7 +357,6 @@
                             to({opacity:0}, 400).
                             onComplete(function() {
                                 dream.visible = false;
-                                //                        alert("enabling");
                             });
                       tw.start();
                   }
@@ -355,8 +372,8 @@
               const dream_center=new THREE.Vector3(coords[0], coords[1], coords[2]);
               let farest=0;
               selected_dream.info["words"].forEach(function(w) {
-                  dreamwords.push(w[1]);
-                  const word_vec=new THREE.Vector3(words[w[1]]["x"],words[w[1]]["y"],words[w[1]]["z"])
+                  dreamwords.push(w[0]);
+                  const word_vec=new THREE.Vector3(words[w[0]]["x"],words[w[0]]["y"],words[w[0]]["z"])
                   const word_distance=word_vec.distanceTo(dream_center);
                   if ( word_distance > farest){
                       farest = word_distance;
@@ -382,8 +399,12 @@
               
               /* simple scale calculation */
               const dreamscale=(farest-sphere_radius)/sphere_radius;
-              
+//              alert(selected_dream.material.color);
+              //            selected_dream.material.color = new THREE.Color(0xFF0000);
+              let newcolor = new THREE.Color(0xFFFF99);
               /* generating the animation for the scaling */
+              selected_dream.material.color=newcolor;
+              
               var tween = new TWEEN.Tween(selected_dream.scale).
                   to({x: dreamscale, y: dreamscale, z: dreamscale}, 1200).
                   easing(TWEEN.Easing.Exponential.InOut).
@@ -399,6 +420,7 @@
                       });
                       $("#backbutton").show();
                       $("#controls").css("visibility", "visible");
+                      $("#restartbutton").click(function () {restartaudio();});
                       $("#pausebutton").click(function () {pauseaudio();});
                       $("#playbutton").click(function () {playaudio();});
                   }).start();
@@ -406,23 +428,23 @@
           }
 
           var mouseMoved=false;
+          function restartaudio(){
+              sound.stop();
+              playaudio();
+          }
           function playaudio(){
               $("#pausebutton").addClass("in-use");
+              $("#restartbutton").addClass("in-use");
               $("#playbutton").removeClass("in-use");
               sound.play();
-          }
+          }          
           function pauseaudio(){
               $("#playbutton").addClass("in-use");
               $("#pausebutton").removeClass("in-use");
               sound.pause();
           }
           function handleClick() {
-              console.log("[renderer] Scene polycount:", renderer.info.render.triangles);
-              console.log("[renderer] Active Drawcalls:", renderer.info.render.calls);
-              console.log("[renderer] Textures in Memory", renderer.info.memory.textures);
-              console.log("[renderer] Geometries in Memory", renderer.info.memory.geometries);
               if (mouseMoved) return;
-              
               raycaster.setFromCamera( mouse, camera );
               const intersects = raycaster.intersectObjects( dreams_points );
               if (intersects.length>0) {
@@ -431,17 +453,12 @@
               else {
                   focused_dream=null;
               }
-
               //              alert(enabled_controls);
               if (!enabled_controls) return;
               var distance=centerVect.distanceTo(camera.position);
               //        alert(view_mode());
               /* single dream -> all dreams */
-              if (mode() == "single") {
-                  show_all_dreams();
-                  selected_dream=null;
-              }
-              else {
+              if (mode() != "single"){
                   /* all dreams -> single dream */
                   if (focused_dream) {
                       selected_dream=focused_dream;
@@ -499,13 +516,15 @@
           
           function update(){
               if (mode()=="intro") {
-//                  const camera_distance = camera.position.distanceTo(new THREE.Vector3(0,0,0));
-//                  if (camera_distance<intro_distance_threshold) {
                       exploration_mode();
-//                  }
               }
 
               controls.update();
+
+              if (mode()=="single") {
+                  document.getElementsByTagName("body")[0].style.cursor = "default";
+                  return;
+              }
               
 	            raycaster.setFromCamera( mouse, camera );        
               const intersects = raycaster.intersectObjects( dreams_points );
