@@ -218,7 +218,7 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
               objectCSS.position.x = w["x"];
 				      objectCSS.position.y = w["y"]+1;
 				      objectCSS.position.z = w["z"];
-              const min=3;
+              const min=8;
               const alpha=0.01*min+0.01*Math.max(0,(w["num"]-min));
               objectCSS.scaledColor="rgba(150,140,130,"+alpha+")";
               objectCSS.absoluteColor="rgba(150,140,130,0.6)";
@@ -293,9 +293,22 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
           $("#backbutton").click(function() { show_all_dreams(); });
 
           /* audio */
+          // global listener
           const listener = new THREE.AudioListener();
           camera.add( listener );
-          const sound = new THREE.Audio( listener );
+
+          const dreamrecording = new THREE.Audio( listener );
+          const backgroundnoise = new THREE.Audio( listener );
+
+          const audioLoader = new THREE.AudioLoader();
+          audioLoader.load("assets/data/audio/background.mp3", function( buffer ) {
+              backgroundnoise.setBuffer( buffer );
+	            backgroundnoise.setLoop( true );
+	            backgroundnoise.setVolume( 0.004 );
+              backgroundnoise.play();
+//              alert(backgroundnoise.isPlaying);
+//              backgroundnoise.setVolume( 1 );
+          });
 
           function onWindowResize( event ) {
               camera.aspect = window.innerWidth / window.innerHeight;
@@ -319,7 +332,7 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
                   start();
 
               const delay=600;
-
+              
               /* tween for showing all the other dreams */
               dreams_points.forEach(function(dream) {
                   if (dream!=selected_dream)
@@ -346,7 +359,7 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
                   }
               }
               $("#controls").css("visibility", "hidden");
-              sound.stop();
+              dreamrecording.stop();
               selected_dream=null;
           }
           
@@ -392,7 +405,6 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
                   for (const [k, w] of Object.entries(words)) {
                       if (!dreamwords.includes(k)) {
                           w["wordobject"].visible=false;
-                          w["starobject"].visible=false;
                       }
                       else {
                           w["wordobject"].visible=true;
@@ -405,8 +417,10 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
               const dreamscale=(farest-sphere_radius)/sphere_radius;
 //              alert(selected_dream.material.color);
               //            selected_dream.material.color = new THREE.Color(0xFF0000);
-              let newcolor = new THREE.Color(0xFFFF99);
+              //              let newcolor = new THREE.Color(0xFFFF99);
+//              let newcolor = new THREE.Color(0xFFA4A3);
               /* generating the animation for the scaling */
+              let newcolor = new THREE.Color(0xFF7B7B);
               selected_dream.material.color=newcolor;
               
               var tween = new TWEEN.Tween(selected_dream.scale).
@@ -415,12 +429,12 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
                   onComplete(function() {
                       const audioLoader = new THREE.AudioLoader();
                       audioLoader.load("assets/data/audio/"+selected_dream.info["audiofile"], function( buffer ) {
-                          sound.setBuffer( buffer );
-	                        sound.setLoop( false );
-	                        sound.setVolume( 1 );
+                          dreamrecording.setBuffer( buffer );
+	                        dreamrecording.setLoop( false );
+	                        dreamrecording.setVolume( 1 );
                           enabled_controls = true;
                           playaudio();
-                          sound.onEnded = function (){show_all_dreams()};
+                          dreamrecording.onEnded = function (){show_all_dreams()};
                       });
                       $("#backbutton").show();
                       $("#controls").css("visibility", "visible");
@@ -433,19 +447,19 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
 
           var mouseMoved=false;
           function restartaudio(){
-              sound.stop();
+              dreamrecording.stop();
               playaudio();
           }
           function playaudio(){
               $("#pausebutton").addClass("in-use");
               $("#restartbutton").addClass("in-use");
               $("#playbutton").removeClass("in-use");
-              sound.play();
+              dreamrecording.play();
           }          
           function pauseaudio(){
               $("#playbutton").addClass("in-use");
               $("#pausebutton").removeClass("in-use");
-              sound.pause();
+              dreamrecording.pause();
           }
           function handleClick() {
               if (mouseMoved) return;
