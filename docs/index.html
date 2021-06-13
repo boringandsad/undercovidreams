@@ -46,7 +46,10 @@ solitamente in un contesto.]
     <li>boringsand@gmail.com</li>
     <li>stefanoboring@gmail.com</li>
     <li>ivanotalamo@gmail.com</li>
-    </ul>
+  </ul>
+<p>
+  Un ringraziamento speciale a Giovanni Antinucci per l'aiuto con gli algoritmi di machine learning.
+  </p>
         </p>
 
 </p>
@@ -456,8 +459,10 @@ import { TWEEN } from "./assets/js/tween.module.min.js";
 	                        dreamrecording.setVolume( 1 );
                           enabled_controls = true;
                           playaudio();
-                          dreamrecording.onEnded = function (){show_all_dreams()};
                       });
+                      dreamrecording.onEnded = function () {
+                          show_all_dreams();
+                          };                      
                       $("#backbutton").show();
                       $("#controls").css("visibility", "visible");
                       $("#restartbutton").click(function () {restartaudio();});
