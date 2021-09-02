@@ -1,5 +1,12 @@
 # Undercovidreams
 
+_Undercovidreams_ lets you empathize with other people's inner worlds
+by listening to their voices telling their own dreams whilst immersing
+yourself in a night sky full of stars.
+
+
+# Concept
+
 Undercovidreams is a night sky where each star is a dream collected in
 Italy during the severe lockdown of 2020. By interrogating the stars
 you can navigate the imagery of people who have suddenly found
