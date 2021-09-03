@@ -9,3 +9,4 @@ Undercovidreams is a collective art project. It shows a night sky where each sta
 
 By interrogating the stars one can navigate the imagery of people who have suddenly found themselves prisoners of an unexpected and frightening situation, who have decided, however, to share with others the nocturnal elaborations of their mind. In fact, what are dreams if not the stories, the desires, the hopes, the fears, the emotions that, just like the stars, guide those who care to decipher them?
 
+Video trailer: https://www.youtube.com/watch?v=9eJF26XcBlI
