@@ -2,6 +2,10 @@
 
 _Undercovidreams_ lets you empathize with other people's inner worlds by listening to their voices telling their own dreams whilst immersing yourself in a night sky full of stars.
 
+You can visit it at: https://boringandsad.github.io/undercovidreams/
+
+Here you can watch a trailer:
+
 <a href="https://www.youtube.com/watch?v=9eJF26XcBlI">
 <img src="https://raw.githubusercontent.com/boringandsad/undercovidreams/master/screenshot.png" alt="video trailer">
 </a>
